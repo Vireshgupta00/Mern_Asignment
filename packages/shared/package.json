@@ -1,0 +1,17 @@
+{
+  "name": "@career-platform/shared",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "mongoose": "^8.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@career-platform/tsconfig": "*",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "typescript": "^5.0.0"
+  }
+}

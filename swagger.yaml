@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: AI Career Platform API
+  description: Complete API Documentation for Authentication, AI Chat, Resumes, and Bookings.
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000/api
+    description: Local API Gateway
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Validation error or user already exists
+  /auth/login:
+    post:
+      summary: Login and receive JWT
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: JWT Token returned successfully
+        '401':
+          description: Invalid credentials
+  /ai/sessions:
+    post:
+      summary: Create a new AI chat session
+      tags: [AI Assistant]
+      responses:
+        '201':
+          description: Chat session created
+  /ai/sessions/{id}/messages:
+    post:
+      summary: Send a message to the AI Career Assistant
+      tags: [AI Assistant]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string }
+      responses:
+        '200':
+          description: AI Response generated successfully
+        '429':
+          description: Rate limit exceeded
+  /resume:
+    get:
+      summary: Get all resumes for the authenticated user
+      tags: [Resumes]
+      responses:
+        '200':
+          description: Array of resumes
+    post:
+      summary: Create a new structured resume
+      tags: [Resumes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+                templateId: { type: string, default: 'modern' }
+                experience: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title: { type: string }
+                      description: { type: string }
+      responses:
+        '201':
+          description: Resume created
+  /bookings/consultants:
+    get:
+      summary: Get available career consultants
+      tags: [Consultation]
+      responses:
+        '200':
+          description: Array of consultant profiles
+  /bookings:
+    post:
+      summary: Book a consultation and initiate Stripe payment
+      tags: [Consultation]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consultantId, date, timeSlot]
+              properties:
+                consultantId: { type: string }
+                date: { type: string, format: date }
+                timeSlot: { type: string }
+      responses:
+        '200':
+          description: Stripe Checkout URL returned
+        '400':
+          description: Time slot already booked or past date
